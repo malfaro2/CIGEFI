@@ -159,8 +159,11 @@ Pregunta de interés estadístico:
 
 class: center, middle
 
-# ¡Gracias!
-
 Presentación creada con el paquete de R [**xaringan**](https://github.com/yihui/xaringan).
 
+Encuentre esta presentación en: https://bit.ly/2G3e1Ij
+
+Contacto: https://malfaro2.github.io
+
+# ¡Gracias!
 
