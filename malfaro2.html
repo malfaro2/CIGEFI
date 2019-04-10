@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Caracterización de la dependencia espacio temporal en modelos y pruebas estadísticas para datos climáticos</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Marcela Alfaro Córdoba y Luis Barboza" />
+    <meta name="date" content="2019-04-10" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Caracterización de la dependencia espacio temporal en modelos y pruebas estadísticas para datos climáticos
+### Marcela Alfaro Córdoba y Luis Barboza
+### 2019-04-10
+
+---
+
+
+
+
+
+
+class: center, middle
+
+# Proyecto B7166 
+
+![](http://cimpa.ucr.ac.cr/images/Cimpa/images/Logos/firma-con-cimpa.png)
+
+
+---
+
+# Proyecto B7166 - objetivos
+
+* Emulador de un modelo climático regional (RCM) que utiliza variables salida de un modelo de circulación global (GCM) como covariables y un marco estadístico Bayesiano para proveer una aproximación rápida a las variables de salida de un RCM. 
+
+* El método es aplicado para emular la precipitación del modelo regional CRCM utilizando variables de salida del modelo global CCSM, utilizando datos del Programa Regional de Evaluación del Cambio Climático de América del Norte (NARCCAP) [Mearns, L.O., et al., (2014)](http://www.narccap.ucar.edu/about/citation.html)
+
+* Principal reto es decribir de una manera computacionalmente eficiente, la relación entre los dos modelos con distinta resolución, tomando en cuenta la dependencia espacio-temporal.
+
+---
+
+# Proyecto B7166 - datos
+
+![](mapa1.jpeg)
+
+---
+
+# Proyecto B7166 - datos
+
+![](mapa2.jpeg)
+
+--
+
+`\(N  \sim 15000\)` locaciones y `\(T = 360\)` meses.
+
+---
+
+# Proyecto B7166 - modelo
+
+Modelo usual:
+
+Sea `\(Y_t(s)\)` el output del modelo RCM para la locación `\(s\)` con la resolución de RCM para el año `\(t\)`. `\(Y_t(s)\)` se modela como:
+
+$$ Y_t(s) = X_t(s)\beta  + \varepsilon_t(s)$$
+
+donde `\(\varepsilon_t \sim GP(0, C(h,\Omega) )\)` y `\(C(h,\Omega)\)` es la función de covariancia espacial que describe el proceso espacial suavizado utilizando la distancia `\(h\)` y un conjunto de parámetros `\(\Omega\)`. 
+
+--
+
+Pero: ¿qué pasa cuando se puede asumir que la tendencia temporal es distinta para cada locación s?
+
+$$ Y_t(s) = X_t(s)\beta(s)  + \varepsilon_t(s)$$
+
+donde `\(\beta(s) = \beta_0 + \beta_1(s)\)` y `\(\beta_1 \sim GP(0, C(h,\Omega) )\)` y `\(C(h,\Omega)\)`, además, el error `\(\varepsilon_t(s) \sim GP(0,I\sigma^2)\)` . 
+
+---
+
+&lt;img src="estimacion.png" width="550px" /&gt;
+
+
+Fuente: Shubin (2016) https://bit.ly/2G7GJb5
+---
+
+# Proyecto B7166 - estimación
+
+
+* INLA: Aproximación de Laplace 
+
+* TF: MCMC utilizando Tensor Flow 
+
+* STAN: MC Hamiltoniano (uso de gradientes)
+
+
+Estudio en curso: ¿Cuál algoritmo es computacionalmente más eficiente, y al mismo tiempo captura de la mejor manera la estructura de dependencia espacio-temporal para N &gt; 3000, T &gt; 12?
+
+--
+
+## -&gt; Resultados estarán listos al final de este año &lt;- ##
+---
+
+
+# Proyecto B7166 - resultados
+
+![](workflow.png)
+
+### Flujo de trabajo
+
+* El código está escrito para extraer precipitación del modelo regional CRCM y del modelo global CCSM, utilizando datos de NARCCAP.
+
+* El objetivo es crear un paquete ROpenSci que permita repetir el proceso con distintos RCMs y GCMs.
+
+---
+class: inverse, center, middle
+
+# Si existen tantas opciones de aprendizaje de máquina, ¿por qué preocuparse por la opción Bayesiana o por la opción de estimación que no es solamente puntual? 
+
+---
+
+&lt;img src="estimacion.png" width="550px" /&gt;
+
+
+Fuente: Shubin (2016) https://bit.ly/2G7GJb5
+
+---
+
+# Caracterización de la incertidumbre 
+
+$$ Y_t(s) = X_t(s)\beta(s)  + \varepsilon_t(s)$$
+
+Estimar `\(\beta(s)\)` puntualmente no es problema, el problema es determinar si hay evidencia o no para decir que es distinta a cero en cada locación.
+
+--
+
+### Un cálculo que ignore la dependencia espacial en este caso, puede cambiar las conclusiones.
+
+Algunas soluciones para grandes datos: Heaton et al (2018) https://arxiv.org/abs/1710.05013?context=stat
+
+---
+
+# Posibles colaboraciones 
+
+## ¿En qué podemos trabajar en conjunto?
+
+(1) Aplicaciones para las técnicas computacionalmente eficientes para la estimación de estructuras de dependencia espacio-temporales.
+
+(2) Crear un flujo de trabajo reproducible para el tratamiento de estos datos.
+
+Pregunta de interés estadístico:
+
+### ¿Cómo modelar estadísticamente la dependencia espacio-temporal, de una manera computacionalmente eficiente?
+
+
+---
+
+class: center, middle
+
+# ¡Gracias!
+
+Presentación creada con el paquete de R [**xaringan**](https://github.com/yihui/xaringan).
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
